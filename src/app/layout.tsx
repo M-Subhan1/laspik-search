@@ -3,6 +3,9 @@ import * as React from 'react';
 
 import '@/styles/globals.css';
 
+import AppProvider from '@/components/app-provider';
+import { Toaster } from '@/components/ui/sonner';
+
 import { siteConfig } from '@/constant/config';
 
 // !STARTERCONF Change these default meta
@@ -54,7 +57,12 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <body>{children}</body>
+      <body>
+        <main>
+          <AppProvider>{children}</AppProvider>
+        </main>
+        <Toaster />
+      </body>
     </html>
   );
 }
