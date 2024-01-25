@@ -12,15 +12,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { Profile } from '@/types';
+import { File, Profile } from '@/types';
 
-type Props = {
-  onOpen: (d: Profile) => void;
-  onDelete: (d: Profile) => void;
+type FileWithProfile = File & {
+  profile?: Profile;
 };
 
-export function getColumns({ onOpen, onDelete }: Props): ColumnDef<Profile>[] {
-  const columns: ColumnDef<Profile>[] = [
+type Props = {
+  onOpen: (d: FileWithProfile) => void;
+  onDelete: (d: FileWithProfile) => void;
+};
+
+export function getColumns({
+  onOpen,
+  onDelete,
+}: Props): ColumnDef<FileWithProfile>[] {
+  const columns: ColumnDef<FileWithProfile>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -49,7 +56,7 @@ export function getColumns({ onOpen, onDelete }: Props): ColumnDef<Profile>[] {
       cell: ({ row }) => {
         return (
           <Link
-            href={`/dashboard/profiles/${row.original.id}`}
+            href={`/files/${row.originalSubRows}`}
             className='hover:underline'
           >
             {row.getValue('name')}
@@ -58,12 +65,22 @@ export function getColumns({ onOpen, onDelete }: Props): ColumnDef<Profile>[] {
       },
     },
     {
+      id: 'group',
       enableSorting: false,
-      accessorKey: 'group',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title='Profile Group' />
       ),
-      cell: ({ row }) => <div>{row.getValue('group')}</div>,
+      cell: ({ row }) => (
+        <div>{(row.getValue('profile') as Profile)?.group}</div>
+      ),
+    },
+    {
+      enableSorting: false,
+      accessorKey: 'status',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title='Status' />
+      ),
+      cell: ({ row }) => <div>{row.getValue('status')}</div>,
     },
     {
       id: 'actions',

@@ -2,35 +2,33 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
+import { Profile } from '@/types';
 import { TablesInsert, TablesUpdate } from '@/types/supabase';
 
-type UpsertProfileData = TablesInsert<'profiles'> | TablesUpdate<'profiles'>;
+type UpsertFileData = TablesInsert<'files'> | TablesUpdate<'files'>;
 
-export const useUpsertProfile = () => {
+export const useUpsertFiles = ({ profileId }: { profileId: Profile['id'] }) => {
   const supabase = createClientComponentClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ['profile', 'upsert'],
-    mutationFn: async (fieldValues: UpsertProfileData) => {
+    mutationKey: ['file', 'upsert'],
+    mutationFn: async (fieldValues: UpsertFileData) => {
       const { error } = await supabase
-        .from('profiles')
+        .from('files')
         .upsert(fieldValues)
         .eq('id', fieldValues.id)
         .select('*');
 
       if (error) {
-        toast.error(
-          error.code === '23505' ? 'Profile already exists' : error.message
-        );
+        toast.error(error.message);
 
         return false;
       }
 
-      toast.success('Profile updated');
-
+      toast.success(fieldValues.id ? 'File created' : 'File details updated');
       await queryClient.invalidateQueries({
-        queryKey: ['profile', 'get'],
+        queryKey: ['files', 'get', { profileId }],
       });
 
       return true;

@@ -4,17 +4,17 @@ import { toast } from 'sonner';
 
 import { Tables } from '@/types/supabase';
 
-type ProfileId = Tables<'profiles'>['id'];
+type FileId = Tables<'files'>['id'];
 
-export const useDeleteProfiles = () => {
+export const useDeleteFiles = () => {
   const supabase = createClientComponentClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ['profiles', 'delete'],
-    mutationFn: async (fieldValues: ProfileId | ProfileId[]) => {
+    mutationKey: ['files', 'delete'],
+    mutationFn: async (fieldValues: FileId | FileId[]) => {
       const { error } = await supabase
-        .from('profiles')
+        .from('files')
         .delete()
         .in('id', Array.isArray(fieldValues) ? fieldValues : [fieldValues]);
 
@@ -22,9 +22,9 @@ export const useDeleteProfiles = () => {
         toast.error(error.message);
       }
 
-      toast.success('Profile(s) deleted');
+      toast.success('Files(s) deleted');
       await queryClient.invalidateQueries({
-        queryKey: ['profiles', 'get'],
+        queryKey: ['files', 'get'],
       });
     },
   });

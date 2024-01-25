@@ -15,15 +15,15 @@ import {
 import { Loader } from 'lucide-react';
 import * as React from 'react';
 import { useDebounce } from 'use-debounce';
+import { z } from 'zod';
 
-import { useDeleteProfiles } from '@/hooks/useDeleteProfiles';
-import { useFetchProfiles } from '@/hooks/useFetchProfiles';
-import { useUpsertProfile } from '@/hooks/useUpsertProfile';
+import { useDeleteFiles } from '@/hooks/useDeleteFiles';
+import { useFetchFiles } from '@/hooks/useFetchFiles';
+import { useFetchProfile } from '@/hooks/useFetchProfile';
 
 import Page from '@/components/dashboard/page';
-import { getColumns } from '@/components/profiles/columns';
-import { DataTableToolbar } from '@/components/profiles/toolbar';
-import { UpsertProfileDialog } from '@/components/profiles/upsert-dialog';
+import { getColumns } from '@/components/files/columns';
+import { DataTableToolbar } from '@/components/files/toolbar';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,11 +37,17 @@ import {
 import { DataTable } from '@/components/ui/data-table';
 import { DataTablePagination } from '@/components/ui/data-table/pagination';
 
-import { Profile } from '@/types';
+import { File } from '@/types';
 
 type Mode = 'view' | 'create' | 'edit' | 'delete' | 'bulk_delete';
 
-export default function DashboardHome() {
+type PageProps = {
+  params: {
+    profileId: string;
+  };
+};
+
+export default function ViewFiles({ params }: PageProps) {
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -52,17 +58,23 @@ export default function DashboardHome() {
   const [pageIndex, setPageIndex] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(25);
 
-  const [selected, setSelected] = React.useState<Profile>();
+  const [selected, setSelected] = React.useState<File>();
   const [mode, setMode] = React.useState<Mode>('view');
   const [query, setQuery] = React.useState('');
   const [debouncedQuery] = useDebounce(query, 250);
+  const profileId = z.coerce.number().int().parse(params.profileId);
 
-  const upsertProfile = useUpsertProfile();
-  const deleteProfiles = useDeleteProfiles();
-  const fetchProfiles = useFetchProfiles({
+  // const upsertProfile = useUpsertProfile();
+  const deleteProfiles = useDeleteFiles();
+  const fetchProfile = useFetchProfile({
+    id: profileId,
+  });
+
+  const fetchFiles = useFetchFiles({
     query: debouncedQuery,
     page: pageIndex,
     pageSize,
+    profileId,
   });
 
   const clearSelection = () => {
@@ -71,7 +83,7 @@ export default function DashboardHome() {
     setRowSelection({});
   };
 
-  const handleDelete = (d: Profile) => {
+  const handleDelete = (d: File) => {
     setSelected(d);
     setMode('delete');
   };
@@ -88,8 +100,9 @@ export default function DashboardHome() {
     []
   );
 
-  const table = useReactTable<Profile>({
-    data: fetchProfiles.data ?? [],
+  const table = useReactTable({
+    data:
+      fetchFiles.data?.map((f) => ({ ...f, profile: fetchProfile.data })) ?? [],
     columns,
     state: {
       sorting,
@@ -145,7 +158,7 @@ export default function DashboardHome() {
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete the
-            selected exams(s).
+            selected files(s).
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -172,13 +185,13 @@ export default function DashboardHome() {
 
   return (
     <Page
-      title='Profiles'
-      isLoading={fetchProfiles.isFetching}
+      title='Files'
+      isLoading={fetchProfile.isPending}
       toolbar={toolbar}
       footer={footer}
     >
       <DataTable table={table} />
-      {((mode === 'edit' && selected) || mode === 'create') && (
+      {/* {((mode === 'edit' && selected) || mode === 'create') && (
         <UpsertProfileDialog
           defaultValues={mode === 'edit' ? selected : undefined}
           open={mode === 'create' || mode === 'edit'}
@@ -192,7 +205,7 @@ export default function DashboardHome() {
             created && setMode('view');
           }}
         />
-      )}
+      )} */}
       {deleteModal}
     </Page>
   );

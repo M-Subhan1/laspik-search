@@ -9,6 +9,45 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      files: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          profile_id: number;
+          status: Database['public']['Enums']['status'];
+        };
+        Insert: {
+          created_at?: string;
+          id: string;
+          name: string;
+          profile_id: number;
+          status?: Database['public']['Enums']['status'];
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          profile_id?: number;
+          status?: Database['public']['Enums']['status'];
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'files_id_fkey';
+            columns: ['id'];
+            isOneToOne: true;
+            referencedRelation: 'objects';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'files_profile_id_fkey';
+            columns: ['profile_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       profiles: {
         Row: {
           created_at: string;
@@ -38,7 +77,7 @@ export interface Database {
       [_ in never]: never;
     };
     Enums: {
-      [_ in never]: never;
+      status: 'pending' | 'processed';
     };
     CompositeTypes: {
       [_ in never]: never;
