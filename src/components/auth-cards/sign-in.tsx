@@ -39,9 +39,7 @@ export default function SignInCard() {
 
     if (data) {
       toast.success('Signed in successfully. Redirecting...');
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 1000);
+      router.push('/dashboard');
       return;
     }
   };
@@ -59,9 +57,8 @@ export default function SignInCard() {
             <FormItem className='w-full'>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder='' {...field} />
+                <Input {...field} />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
