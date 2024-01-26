@@ -67,7 +67,9 @@ export const UpsertProfileDialog = ({
   onSubmit: (profile: ProfileData) => void;
 }) => {
   const [groupQuery, setGroupQuery] = useState('');
-  const [groups, setGroups] = useState<string[]>([]);
+  const [groups, setGroups] = useState<string[]>(
+    defaultValues ? [defaultValues?.group] : []
+  );
   const form = useForm<ProfileData>({
     resolver: zodResolver(profileSchema),
     defaultValues,
