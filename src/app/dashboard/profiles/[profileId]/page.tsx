@@ -20,9 +20,12 @@ import { z } from 'zod';
 import { useDeleteFiles } from '@/hooks/useDeleteFiles';
 import { useFetchFiles } from '@/hooks/useFetchFiles';
 import { useFetchProfile } from '@/hooks/useFetchProfile';
+import { useUploadFiles } from '@/hooks/useUploadFiles';
+import { useUpsertFile } from '@/hooks/useUpsertFile';
 
 import Page from '@/components/dashboard/page';
 import { getColumns } from '@/components/files/columns';
+import { CreateFileDialog } from '@/components/files/create-dialog';
 import { DataTableToolbar } from '@/components/files/toolbar';
 import {
   AlertDialog,
@@ -39,7 +42,7 @@ import { DataTablePagination } from '@/components/ui/data-table/pagination';
 
 import { File } from '@/types';
 
-type Mode = 'view' | 'create' | 'edit' | 'delete' | 'bulk_delete';
+type Mode = 'view' | 'create' | 'delete' | 'bulk_delete';
 
 type PageProps = {
   params: {
@@ -64,8 +67,20 @@ export default function ViewFiles({ params }: PageProps) {
   const [debouncedQuery] = useDebounce(query, 250);
   const profileId = z.coerce.number().int().parse(params.profileId);
 
-  // const upsertProfile = useUpsertProfile();
-  const deleteProfiles = useDeleteFiles();
+  const deleteFiles = useDeleteFiles();
+  const upsertFile = useUpsertFile({ profileId });
+
+  const uploadFiles = useUploadFiles({
+    onSubmitted: (data) => {
+      upsertFile.mutate({
+        name: data.name,
+        object_id: data.id,
+        status: data.status,
+        full_path: 'file/' + data.path,
+      });
+    },
+  });
+
   const fetchProfile = useFetchProfile({
     id: profileId,
   });
@@ -93,7 +108,7 @@ export default function ViewFiles({ params }: PageProps) {
       getColumns({
         onOpen: (d) => {
           setSelected(d);
-          setMode('edit');
+          // setMode('edit');
         },
         onDelete: handleDelete,
       }),
@@ -165,15 +180,17 @@ export default function ViewFiles({ params }: PageProps) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              deleteProfiles.mutateAsync(
+              deleteFiles.mutateAsync(
                 mode === 'delete' && !!selected
-                  ? [selected.id]
-                  : table.getSelectedRowModel().rows.map((r) => r.original.id)
+                  ? [selected.object_id]
+                  : table
+                      .getSelectedRowModel()
+                      .rows.map((r) => r.original.object_id)
               );
               clearSelection();
             }}
           >
-            {deleteProfiles.isPending && (
+            {deleteFiles.isPending && (
               <Loader className='animte-spin w-4 h-4 mr-2' />
             )}
             Delete
@@ -186,26 +203,22 @@ export default function ViewFiles({ params }: PageProps) {
   return (
     <Page
       title='Files'
-      isLoading={fetchProfile.isPending}
+      isLoading={fetchProfile.isFetching || fetchFiles.isFetching}
       toolbar={toolbar}
       footer={footer}
     >
       <DataTable table={table} />
-      {/* {((mode === 'edit' && selected) || mode === 'create') && (
-        <UpsertProfileDialog
-          defaultValues={mode === 'edit' ? selected : undefined}
-          open={mode === 'create' || mode === 'edit'}
+      {mode === 'create' && (
+        <CreateFileDialog
+          open={mode === 'create'}
           onClose={() => setMode('view')}
-          isLoading={upsertProfile.isPending}
+          isLoading={uploadFiles.isPending || upsertFile.isPending}
           onSubmit={async (data) => {
-            const created = await upsertProfile.mutateAsync({
-              id: selected?.id,
-              ...data,
-            });
-            created && setMode('view');
+            uploadFiles.mutateAsync(data);
+            clearSelection();
           }}
         />
-      )} */}
+      )}
       {deleteModal}
     </Page>
   );

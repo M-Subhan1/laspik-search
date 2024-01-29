@@ -1,6 +1,5 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { ColumnDef } from '@tanstack/react-table';
-import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -54,14 +53,7 @@ export function getColumns({
         <DataTableColumnHeader column={column} title='Name' />
       ),
       cell: ({ row }) => {
-        return (
-          <Link
-            href={`/files/${row.originalSubRows}`}
-            className='hover:underline'
-          >
-            {row.getValue('name')}
-          </Link>
-        );
+        return <div>{row.getValue('name')}</div>;
       },
     },
     {
@@ -70,9 +62,9 @@ export function getColumns({
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title='Profile Group' />
       ),
-      cell: ({ row }) => (
-        <div>{(row.getValue('profile') as Profile)?.group_id}</div>
-      ),
+      cell: ({ row }) => {
+        return <div>{row.original.profile?.group_id}</div>;
+      },
     },
     {
       enableSorting: false,

@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
-export type UpsertFileData = z.infer<typeof upsertFileSchema>;
-export const upsertFileSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1),
-  profileId: z.number().int(),
+export type UploadFilesData = z.infer<typeof uploadFilesSchema>;
+export const uploadFilesSchema = z.object({
   status: z.enum(['pending', 'processed']),
+  files: z.array(z.string()),
 });

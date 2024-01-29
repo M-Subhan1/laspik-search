@@ -12,30 +12,33 @@ export interface Database {
       files: {
         Row: {
           created_at: string;
-          id: string;
+          full_path: string;
           name: string;
+          object_id: string;
           profile_id: number;
           status: Database['public']['Enums']['status'];
         };
         Insert: {
           created_at?: string;
-          id: string;
+          full_path: string;
           name: string;
+          object_id: string;
           profile_id: number;
           status?: Database['public']['Enums']['status'];
         };
         Update: {
           created_at?: string;
-          id?: string;
+          full_path?: string;
           name?: string;
+          object_id?: string;
           profile_id?: number;
           status?: Database['public']['Enums']['status'];
         };
         Relationships: [
           {
-            foreignKeyName: 'files_id_fkey';
-            columns: ['id'];
-            isOneToOne: true;
+            foreignKeyName: 'files_object_id_fkey';
+            columns: ['object_id'];
+            isOneToOne: false;
             referencedRelation: 'objects';
             referencedColumns: ['id'];
           },

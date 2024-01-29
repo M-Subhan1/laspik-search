@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 import { Tables } from '@/types/supabase';
 
-type FileId = Tables<'files'>['id'];
+type FileId = Tables<'files'>['object_id'];
 
 export const useDeleteFiles = () => {
   const supabase = createClientComponentClient();
@@ -16,7 +16,10 @@ export const useDeleteFiles = () => {
       const { error } = await supabase
         .from('files')
         .delete()
-        .in('id', Array.isArray(fieldValues) ? fieldValues : [fieldValues]);
+        .in(
+          'object_id',
+          Array.isArray(fieldValues) ? fieldValues : [fieldValues]
+        );
 
       if (error) {
         toast.error(error.message);

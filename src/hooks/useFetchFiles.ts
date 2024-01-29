@@ -19,6 +19,7 @@ export const useFetchFiles = ({ query, profileId, page, pageSize }: Params) => {
         .from('files')
         .select('*')
         .ilike('name', `%${query?.toLowerCase()}%`)
+        .eq('profile_id', profileId)
         .range(page * pageSize, page * pageSize + pageSize - 1);
 
       if (error) {

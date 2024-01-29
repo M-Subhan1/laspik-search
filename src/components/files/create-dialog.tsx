@@ -1,6 +1,7 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader } from 'lucide-react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -21,8 +22,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
-import { UpsertFileData, upsertFileSchema } from '@/schema/file';
+import { UploadFilesData, uploadFilesSchema } from '@/schema/file';
 
 const dictionary = {
   create: {
@@ -37,32 +45,47 @@ const dictionary = {
   },
 };
 
-export const UpsertFileDialog = ({
-  defaultValues,
+const CreateFileDialog = ({
   open,
   isLoading,
   onClose,
   onSubmit,
 }: {
-  defaultValues?: UpsertFileData;
   open: boolean;
   isLoading: boolean;
   onClose: () => void;
-  onSubmit: (profile: UpsertFileData) => void;
+  onSubmit: ({
+    status,
+    files,
+  }: {
+    status: UploadFilesData['status'];
+    files: File[];
+  }) => void;
 }) => {
-  // const [fileList, setFileList] = useState<FileList>();
+  const [files, setFiles] = useState<File[]>();
 
-  const form = useForm<UpsertFileData>({
-    resolver: zodResolver(upsertFileSchema),
-    defaultValues,
+  const form = useForm<UploadFilesData>({
+    resolver: zodResolver(uploadFilesSchema),
+    defaultValues: {
+      status: 'pending',
+      files: [],
+    },
   });
 
-  const content = dictionary[defaultValues ? 'update' : 'create'];
+  const content = dictionary['create'];
+
+  const handleSubmit = async (fieldValues: UploadFilesData) => {
+    files &&
+      onSubmit({
+        status: fieldValues.status,
+        files,
+      });
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className='flex flex-col gap-2'
       >
         <DialogContent className='sm:max-w-[425px]'>
@@ -73,42 +96,45 @@ export const UpsertFileDialog = ({
             </DialogHeader>
             <FormField
               control={form.control}
-              name='name'
-              render={({ field }) => (
-                <FormItem className='w-full'>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name='status'
               render={({ field }) => (
-                <FormItem className='w-full'>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Select status' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value='pending'>Processing</SelectItem>
+                      <SelectItem value='processed'>Processed</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormItem>
               )}
             />
             <FormField
               control={form.control}
-              name='id'
+              name='files'
               render={({ field }) => (
                 <FormItem className='w-full'>
-                  <FormLabel>File</FormLabel>
+                  <FormLabel>Files</FormLabel>
                   <FormControl>
                     <Input
                       type='file'
-                      {...field}
+                      multiple
+                      max={5}
                       onChange={(e) => {
-                        field.onChange(e);
+                        if (!e.target.files) return;
+
+                        const files = Array.from(e.target.files);
+
+                        field.onChange(files.map((f) => f.name));
+                        setFiles(files);
                       }}
                     />
                   </FormControl>
@@ -118,7 +144,7 @@ export const UpsertFileDialog = ({
             />
             <DialogFooter>
               <Button
-                onClick={form.handleSubmit(onSubmit)}
+                onClick={form.handleSubmit(handleSubmit)}
                 disabled={isLoading}
                 type='submit'
               >
@@ -132,3 +158,5 @@ export const UpsertFileDialog = ({
     </Dialog>
   );
 };
+
+export { CreateFileDialog };
