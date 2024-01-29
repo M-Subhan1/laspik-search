@@ -30,7 +30,7 @@ export default function Page({
           {isLoading ? (
             <Loader className='mx-auto animate-spin self-center' />
           ) : (
-            <ScrollArea className='h-full w-full overflow-hidden'>
+            <ScrollArea className='h-full flex flex-col w-full overflow-hidden'>
               {children}
             </ScrollArea>
           )}

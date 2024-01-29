@@ -128,6 +128,7 @@ const CreateFileDialog = ({
                       type='file'
                       multiple
                       max={5}
+                      accept='application/pdf'
                       onChange={(e) => {
                         if (!e.target.files) return;
 

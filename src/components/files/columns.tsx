@@ -1,5 +1,6 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { ColumnDef } from '@tanstack/react-table';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -53,7 +54,14 @@ export function getColumns({
         <DataTableColumnHeader column={column} title='Name' />
       ),
       cell: ({ row }) => {
-        return <div>{row.getValue('name')}</div>;
+        return (
+          <Link
+            className='hover:underline'
+            href={`/dashboard/files/${row.original.full_path.split('/')[1]}`}
+          >
+            {row.getValue('name')}
+          </Link>
+        );
       },
     },
     {

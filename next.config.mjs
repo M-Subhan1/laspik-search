@@ -22,6 +22,7 @@ const nextConfig = {
       rule.test?.test?.('.svg')
     );
 
+    config.resolve.alias.canvas = false;
     config.module.rules.push(
       // Reapply the existing rule, but only for svg imports ending in ?url
       {
