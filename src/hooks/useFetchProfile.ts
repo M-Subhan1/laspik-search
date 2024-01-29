@@ -20,7 +20,7 @@ export const useFetchProfile = ({ id }: Params) => {
         .eq('id', id)
         .single();
 
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         toast.error(error.message);
       }
 

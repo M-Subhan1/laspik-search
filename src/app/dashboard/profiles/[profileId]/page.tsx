@@ -12,11 +12,14 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import { Loader } from 'lucide-react';
+import { ArrowLeftCircleIcon, Loader } from 'lucide-react';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import * as React from 'react';
 import { useDebounce } from 'use-debounce';
 import { z } from 'zod';
 
+import { cn } from '@/lib/utils';
 import { useDeleteFiles } from '@/hooks/useDeleteFiles';
 import { useFetchFiles } from '@/hooks/useFetchFiles';
 import { useFetchProfile } from '@/hooks/useFetchProfile';
@@ -37,6 +40,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { buttonVariants } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTablePagination } from '@/components/ui/data-table/pagination';
 
@@ -200,10 +204,34 @@ export default function ViewFiles({ params }: PageProps) {
     </AlertDialog>
   );
 
+  if (fetchProfile.isFetched && !fetchProfile.data) {
+    return redirect('/dashboard');
+  }
+
   return (
     <Page
-      title='Files'
-      isLoading={fetchProfile.isFetching || fetchFiles.isFetching}
+      title={
+        <div className='flex items-center'>
+          <Link
+            href='/dashboard/'
+            className={cn(
+              'mr-2',
+              buttonVariants({
+                size: 'icon',
+                variant: 'ghost',
+              })
+            )}
+          >
+            <ArrowLeftCircleIcon className='w-4 h-4' />
+          </Link>
+          Files - {fetchProfile.data?.name ?? 'Loading...'}
+        </div>
+      }
+      isLoading={
+        fetchProfile.isFetching ||
+        fetchFiles.isFetching ||
+        (fetchProfile.isFetched && !fetchProfile.data)
+      }
       toolbar={toolbar}
       footer={footer}
     >
