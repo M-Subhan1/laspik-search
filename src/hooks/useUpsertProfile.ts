@@ -14,7 +14,7 @@ export const useUpsertProfile = () => {
     mutationKey: ['profile', 'upsert'],
     mutationFn: async (fieldValues: UpsertProfileData) => {
       const { error } = await supabase.rpc('upsert_profile', {
-        id_input: fieldValues.id,
+        id_input: fieldValues.id || null,
         name_input: fieldValues.name,
         group_input: fieldValues.group_id,
       });
