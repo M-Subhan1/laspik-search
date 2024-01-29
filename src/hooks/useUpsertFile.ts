@@ -14,18 +14,24 @@ export const useUpsertFile = ({ profileId }: { profileId: Profile['id'] }) => {
   return useMutation({
     mutationKey: ['file', 'upsert'],
     mutationFn: async (fieldValues: Omit<UpsertFileData, 'profileId'>) => {
-      const { error } = await supabase
-        .from('files')
-        .upsert({
-          name: fieldValues.name,
-          profile_id: profileId,
-          status: fieldValues.status,
-          full_path: fieldValues.full_path,
-          object_id: fieldValues.object_id,
-        })
-        .eq('profile_id', fieldValues.profile_id)
-        .eq('name', fieldValues.name)
-        .select('*');
+      const { error } = await (fieldValues.object_id
+        ? supabase
+            .from('files')
+            .update({
+              name: fieldValues.name,
+              profile_id: profileId,
+              status: fieldValues.status,
+              full_path: fieldValues.full_path,
+              object_id: fieldValues.object_id,
+            })
+            .eq('object_id', fieldValues.object_id)
+        : supabase.from('files').insert({
+            name: fieldValues.name,
+            profile_id: profileId,
+            status: fieldValues.status,
+            full_path: fieldValues.full_path,
+            object_id: fieldValues.object_id,
+          }));
 
       if (error) {
         toast.error(error.message);
@@ -33,9 +39,7 @@ export const useUpsertFile = ({ profileId }: { profileId: Profile['id'] }) => {
         return false;
       }
 
-      toast.success(
-        fieldValues.object_id ? 'File created' : 'File details updated'
-      );
+      toast.success(fieldValues.object_id ? 'File updated' : 'File created');
       await queryClient.invalidateQueries({
         queryKey: ['files', 'get', { profileId }],
       });

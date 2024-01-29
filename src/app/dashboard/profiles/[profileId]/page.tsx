@@ -30,6 +30,7 @@ import Page from '@/components/dashboard/page';
 import { getColumns } from '@/components/files/columns';
 import { CreateFileDialog } from '@/components/files/create-dialog';
 import { DataTableToolbar } from '@/components/files/toolbar';
+import { UpdateFileModal } from '@/components/files/update-modal';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,7 +47,7 @@ import { DataTablePagination } from '@/components/ui/data-table/pagination';
 
 import { File } from '@/types';
 
-type Mode = 'view' | 'create' | 'delete' | 'bulk_delete';
+type Mode = 'view' | 'create' | 'edit' | 'delete' | 'bulk_delete';
 
 type PageProps = {
   params: {
@@ -112,7 +113,7 @@ export default function ViewFiles({ params }: PageProps) {
       getColumns({
         onOpen: (d) => {
           setSelected(d);
-          // setMode('edit');
+          setMode('edit');
         },
         onDelete: handleDelete,
       }),
@@ -243,6 +244,21 @@ export default function ViewFiles({ params }: PageProps) {
           isLoading={uploadFiles.isPending || upsertFile.isPending}
           onSubmit={async (data) => {
             uploadFiles.mutateAsync(data);
+            clearSelection();
+          }}
+        />
+      )}
+      {mode === 'edit' && selected && (
+        <UpdateFileModal
+          open={true}
+          onClose={clearSelection}
+          defaultValues={selected}
+          isLoading={upsertFile.isPending}
+          onSubmit={async (data) => {
+            await upsertFile.mutateAsync({
+              ...selected,
+              ...data,
+            });
             clearSelection();
           }}
         />
