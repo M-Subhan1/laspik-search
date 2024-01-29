@@ -90,8 +90,8 @@ export function DashboardLayout({
               title: 'Logout',
               icon: LogOut,
               variant: 'ghost',
-              onClick: () => {
-                supabase.auth.signOut();
+              onClick: async () => {
+                await supabase.auth.signOut();
                 router.push('/auth/sign-in');
               },
             },

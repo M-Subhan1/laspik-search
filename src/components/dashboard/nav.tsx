@@ -71,6 +71,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
             <Link
               key={index}
               href={link?.href ?? '#'}
+              onClick={link?.onClick}
               className={cn(
                 buttonVariants({ variant: link.variant, size: 'sm' }),
                 link.variant === 'default' &&

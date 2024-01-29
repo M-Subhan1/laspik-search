@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 
 import { useSignIn } from '@/hooks/useSignIn';
 
+import NextImage from '@/components/NextImage';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -20,6 +21,8 @@ import {
 import { Input } from '@/components/ui/input';
 
 import { SignInFormValues, signInSchema } from '@/schema/auth';
+
+import Logo from '~/logo.png';
 
 export default function SignInCard() {
   const router = useRouter();
@@ -48,8 +51,11 @@ export default function SignInCard() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='max-w-sm flex flex-col gap-3 items-start w-full'
+        className='max-w-sm flex flex-col gap-3 items-start justify-center w-full'
       >
+        <div className='rounded-lg self-center w-full px-4 bg-black flex items-center justify-center'>
+          <NextImage width={200} height={100} src={Logo} alt='Logo' />
+        </div>
         <FormField
           control={form.control}
           name='email'
