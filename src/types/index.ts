@@ -6,6 +6,8 @@ export type Profile = Tables<'profiles'>;
 export type UpsertFile = TablesInsert<'files'> | TablesUpdate<'files'>;
 export type File = Tables<'files'>;
 
+export type ProfileGroup = Tables<'groups'>;
+
 export type Pagination = {
   page: number;
   pageSize: number;

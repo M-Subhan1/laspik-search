@@ -16,5 +16,5 @@ export const GET = async (request: NextRequest) => {
     env.SUPABASE_SERVICE_KEY
   );
 
-  return Response.json({ success: true });
+  return new Response('OK');
 };

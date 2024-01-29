@@ -71,7 +71,7 @@ export function getColumns({
         <DataTableColumnHeader column={column} title='Profile Group' />
       ),
       cell: ({ row }) => (
-        <div>{(row.getValue('profile') as Profile)?.group}</div>
+        <div>{(row.getValue('profile') as Profile)?.group_id}</div>
       ),
     },
     {

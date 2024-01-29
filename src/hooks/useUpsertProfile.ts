@@ -13,11 +13,11 @@ export const useUpsertProfile = () => {
   return useMutation({
     mutationKey: ['profile', 'upsert'],
     mutationFn: async (fieldValues: UpsertProfileData) => {
-      const { error } = await supabase
-        .from('profiles')
-        .upsert(fieldValues)
-        .eq('id', fieldValues.id)
-        .select('*');
+      const { error } = await supabase.rpc('upsert_profile', {
+        id_input: fieldValues.id,
+        name_input: fieldValues.name,
+        group_input: fieldValues.group_id,
+      });
 
       if (error) {
         toast.error(
@@ -29,9 +29,14 @@ export const useUpsertProfile = () => {
 
       toast.success('Profile updated');
 
-      await queryClient.invalidateQueries({
-        queryKey: ['profile', 'get'],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['profiles', 'get'],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['profileGroups', 'get'],
+        }),
+      ]);
 
       return true;
     },

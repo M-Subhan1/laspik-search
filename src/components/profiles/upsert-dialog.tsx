@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
+import { useFetchGroups } from '@/hooks/useFetchGroups';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -67,9 +68,19 @@ export const UpsertProfileDialog = ({
   onSubmit: (profile: ProfileData) => void;
 }) => {
   const [groupQuery, setGroupQuery] = useState('');
-  const [groups, setGroups] = useState<string[]>(
-    defaultValues ? [defaultValues?.group] : []
+  const getGroups = useFetchGroups();
+  const [selected, setSelected] = useState<string | undefined>(
+    defaultValues?.group_id
   );
+
+  const groups = Array.from(
+    new Set(
+      (getGroups.data ?? [])
+        .concat(selected ? [{ name: selected, created_at: '' }] : [])
+        .map((g) => g.name)
+    )
+  );
+
   const form = useForm<ProfileData>({
     resolver: zodResolver(profileSchema),
     defaultValues,
@@ -105,7 +116,7 @@ export const UpsertProfileDialog = ({
             />
             <FormField
               control={form.control}
-              name='group'
+              name='group_id'
               render={({ field }) => (
                 <FormItem className='flex flex-col gap-2.5'>
                   <FormLabel>Group</FormLabel>
@@ -120,9 +131,7 @@ export const UpsertProfileDialog = ({
                             !field.value && 'text-muted-foreground'
                           )}
                         >
-                          {field.value
-                            ? groups.find((group) => group === field.value)
-                            : 'Select group'}
+                          {selected || 'Select group'}
                           <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                         </Button>
                       </FormControl>
@@ -140,8 +149,8 @@ export const UpsertProfileDialog = ({
                               value={group}
                               key={group}
                               onSelect={() => {
-                                form.setValue('group', group);
-                                groups.push(group);
+                                form.setValue('group_id', group);
+                                setSelected(group);
                               }}
                             >
                               {group}
@@ -155,13 +164,13 @@ export const UpsertProfileDialog = ({
                               />
                             </CommandItem>
                           ))}
-                          {!!groupQuery && groups.length === 0 && (
+                          {!!groupQuery && selected !== groupQuery && (
                             <CommandItem
                               value={groupQuery}
                               key={groupQuery}
                               onSelect={() => {
-                                form.setValue('group', groupQuery);
-                                setGroups([...groups, groupQuery]);
+                                form.setValue('group_id', groupQuery);
+                                setSelected(groupQuery);
                               }}
                             >
                               Create {groupQuery}

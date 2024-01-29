@@ -48,33 +48,70 @@ export interface Database {
           }
         ];
       };
+      groups: {
+        Row: {
+          created_at: string;
+          name: string;
+        };
+        Insert: {
+          created_at?: string;
+          name: string;
+        };
+        Update: {
+          created_at?: string;
+          name?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           created_at: string;
-          group: string;
+          group_id: string;
           id: number;
           name: string;
         };
         Insert: {
           created_at?: string;
-          group: string;
+          group_id: string;
           id?: number;
           name: string;
         };
         Update: {
           created_at?: string;
-          group?: string;
+          group_id?: string;
           id?: number;
           name?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'profiles_group_id_fkey';
+            columns: ['group_id'];
+            isOneToOne: false;
+            referencedRelation: 'groups';
+            referencedColumns: ['name'];
+          }
+        ];
       };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      create_profile: {
+        Args: {
+          name_input: string;
+          group_input: string;
+        };
+        Returns: undefined;
+      };
+      upsert_profile: {
+        Args: {
+          id_input: number;
+          name_input: string;
+          group_input: string;
+        };
+        Returns: undefined;
+      };
     };
     Enums: {
       status: 'pending' | 'processed';

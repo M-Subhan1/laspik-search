@@ -59,11 +59,11 @@ export function getColumns({ onOpen, onDelete }: Props): ColumnDef<Profile>[] {
     },
     {
       enableSorting: false,
-      accessorKey: 'group',
+      accessorKey: 'group_id',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title='Profile Group' />
       ),
-      cell: ({ row }) => <div>{row.getValue('group')}</div>,
+      cell: ({ row }) => <div>{row.getValue('group_id')}</div>,
     },
     {
       id: 'actions',
