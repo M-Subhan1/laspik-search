@@ -1,6 +1,6 @@
 'use client';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { UploadFilesData } from '@/schema/file';
@@ -18,20 +18,22 @@ type Props = {
 
 type Data = {
   status: UploadFilesData['status'];
+  profileId: number;
   files: File[];
 };
 
 export const useUploadFiles = ({ onSubmitted }: Props) => {
   const supabase = createClientComponentClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationKey: ['uploadFiles'],
-    mutationFn: async ({ status, files }: Data) => {
+    mutationFn: async ({ status, files, profileId }: Data) => {
       await Promise.all(
         files.map(async (file) => {
           const { data, error } = await supabase.storage
             .from('files')
-            .upload(file.name, file);
+            .upload(`${profileId}/${file.name}`, file);
 
           if (error) {
             toast.error(error.message);
@@ -39,7 +41,7 @@ export const useUploadFiles = ({ onSubmitted }: Props) => {
           }
 
           if (data) {
-            onSubmitted({
+            await onSubmitted({
               id: (
                 data as unknown as {
                   id: string;
@@ -52,6 +54,10 @@ export const useUploadFiles = ({ onSubmitted }: Props) => {
           }
         })
       );
+
+      await queryClient.invalidateQueries({
+        queryKey: ['files', 'get', { profileId }],
+      });
     },
   });
 };

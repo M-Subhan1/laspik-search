@@ -45,8 +45,8 @@ export default function PdfViwer({ fileUrl }: Props) {
   }
 
   return (
-    <main className='relative flex flex-wrap w-full h-full p-5'>
-      <div className='w-full top-8 left-1/2 flex gap-2 items-center justify-center'>
+    <main className='relative flex flex-wrap w-full h-full p-5 items-start'>
+      <div className='w-full h-12 left-1/2 flex gap-2 items-center justify-center'>
         <Button onClick={handlePrevious} disabled={pageNumber === 1}>
           <ChevronLeftIcon className='h-5 w-5' /> Prev
         </Button>
@@ -63,7 +63,7 @@ export default function PdfViwer({ fileUrl }: Props) {
           file={fileUrl}
           onLoadSuccess={onDocumentLoadSuccess}
           loading={
-            <div className='w-full h-screen flex items-center justify-center'>
+            <div className='w-full h-full flex items-center justify-center'>
               <Loader className='w-6 h-6 animate-spin' />
             </div>
           }

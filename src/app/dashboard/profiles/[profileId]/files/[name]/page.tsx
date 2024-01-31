@@ -5,7 +5,8 @@ import PdfViewer from '@/components/files/pdf-viewer';
 
 type Props = {
   params: {
-    path: string;
+    name: string;
+    profileId: number;
   };
 };
 
@@ -17,7 +18,7 @@ export default async function FilePreviewPage({ params }: Props) {
 
   const { data, error } = await supabase.storage
     .from('files')
-    .createSignedUrl(params.path, 3600);
+    .createSignedUrl(`/${params.profileId}/${params.name}`, 3600);
 
   if (error) {
     throw error;

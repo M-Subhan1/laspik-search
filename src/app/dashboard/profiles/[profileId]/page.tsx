@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import {
   ColumnFiltersState,
   getCoreRowModel,
@@ -72,12 +73,13 @@ export default function ViewFiles({ params }: PageProps) {
   const [debouncedQuery] = useDebounce(query, 250);
   const profileId = z.coerce.number().int().parse(params.profileId);
 
+  const queryClient = useQueryClient();
   const deleteFiles = useDeleteFiles();
   const upsertFile = useUpsertFile({ profileId });
 
   const uploadFiles = useUploadFiles({
-    onSubmitted: (data) => {
-      upsertFile.mutate({
+    onSubmitted: async (data) => {
+      await upsertFile.mutateAsync({
         name: data.name,
         object_id: data.id,
         status: data.status,
@@ -243,7 +245,11 @@ export default function ViewFiles({ params }: PageProps) {
           onClose={() => setMode('view')}
           isLoading={uploadFiles.isPending || upsertFile.isPending}
           onSubmit={async (data) => {
-            uploadFiles.mutateAsync(data);
+            await uploadFiles.mutateAsync({
+              ...data,
+              profileId,
+            });
+
             clearSelection();
           }}
         />
@@ -258,6 +264,10 @@ export default function ViewFiles({ params }: PageProps) {
             await upsertFile.mutateAsync({
               ...selected,
               ...data,
+            });
+
+            await queryClient.invalidateQueries({
+              queryKey: ['files', 'get', { profileId }],
             });
             clearSelection();
           }}

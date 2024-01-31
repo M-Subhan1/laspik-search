@@ -57,7 +57,9 @@ export function getColumns({
         return (
           <Link
             className='hover:underline'
-            href={`/dashboard/files/${row.original.full_path.split('/')[1]}`}
+            href={`/dashboard/profiles/${row.original.profile_id}/files/${
+              row.original.full_path.split('/')[2]
+            }`}
           >
             {row.getValue('name')}
           </Link>
