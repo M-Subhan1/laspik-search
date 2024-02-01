@@ -6,10 +6,7 @@ export const env = createEnv({
    * Serverside Environment variables, not available on the client.
    * Will throw if you access these variables on the client.
    */
-  server: {
-    CRON_SECRET: z.string().min(1),
-    SUPABASE_SERVICE_KEY: z.string(),
-  },
+  server: {},
   /*
    * Environment variables available on the client (and server).
    *
@@ -28,7 +25,5 @@ export const env = createEnv({
   runtimeEnv: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBlIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    CRON_SECRET: process.env.CRON_SECRET,
-    SUPABASE_SERVICE_KEY: process.env.SUPABASE_SERVICE_KEY,
   },
 });
