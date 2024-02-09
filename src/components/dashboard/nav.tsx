@@ -21,7 +21,7 @@ interface NavProps {
 
 export function Nav({ links }: NavProps) {
   return (
-    <nav className='flex flex-col p-5 mt-72 px-2 justify-center gap-10'>
+    <nav className='flex flex-col p-5 mt-60 xl:mt-72 px-2 justify-center gap-10'>
       {links.map((link, index) => (
         <Fragment key={link.title}>
           <Link
@@ -29,7 +29,7 @@ export function Nav({ links }: NavProps) {
             href={link?.href ?? '#'}
             onClick={link?.onClick}
             className={cn(
-              'text-4xl text-center text-white hover:font-bold hover:underline underline-offset-4'
+              'text-2xl xl:text-4xl text-center text-white hover:font-bold hover:underline underline-offset-4'
             )}
           >
             {link.title}
