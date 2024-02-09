@@ -6,11 +6,7 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable';
+import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
 import { Nav } from './nav';
 
@@ -45,7 +41,7 @@ export function DashboardLayout({
       <ResizablePanel
         defaultSize={defaultLayout[0]}
         collapsedSize={navCollapsedSize}
-        collapsible={true}
+        collapsible={false}
         minSize={15}
         maxSize={20}
         onExpand={() => {
@@ -63,9 +59,14 @@ export function DashboardLayout({
         className={cn(
           isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out'
         )}
+        style={{
+          backgroundImage: "url('/images/dashboard-bg.jpeg')",
+          backgroundPosition: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '100% 100%',
+        }}
       >
         <Nav
-          isCollapsed={isCollapsed}
           links={[
             {
               title: 'Home',
@@ -98,7 +99,6 @@ export function DashboardLayout({
           ]}
         />
       </ResizablePanel>
-      <ResizableHandle withHandle />
       <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
         {children}
       </ResizablePanel>
