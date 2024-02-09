@@ -56,7 +56,9 @@ export function DashboardLayout({ children }: React.PropsWithChildren) {
           ]}
         />
       </div>
-      <ScrollArea className='h-screen w-full'>{children}</ScrollArea>
+      <ScrollArea className='h-screen w-full bg-[#F7F7F7]'>
+        {children}
+      </ScrollArea>
     </div>
   );
 }
