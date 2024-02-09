@@ -6,6 +6,10 @@ import { Fragment } from 'react';
 
 import { cn } from '@/lib/utils';
 
+import NextImage from '@/components/NextImage';
+
+import Logo from '~/logo.png';
+
 type Link = {
   title: string;
   label?: string;
@@ -21,7 +25,10 @@ interface NavProps {
 
 export function Nav({ links }: NavProps) {
   return (
-    <nav className='h-full w-full flex items-center justify-center'>
+    <nav className='h-full w-full flex flex-col items-center'>
+      <div className='rounded-lg self-center w-full my-6 px-4 flex items-center justify-center'>
+        <NextImage width={200} height={100} src={Logo} alt='Logo' />
+      </div>
       <div className='flex flex-col p-5 px-2 justify-center gap-10'>
         {links.map((link, index) => (
           <Fragment key={link.title}>
