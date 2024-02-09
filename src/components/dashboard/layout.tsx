@@ -4,61 +4,19 @@ import { File, HelpCircle, HomeIcon, LogOut } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 
-import { cn } from '@/lib/utils';
-
-import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 import { Nav } from './nav';
 
-interface DashboardLayoutProps {
-  defaultLayout: number[] | undefined;
-  defaultCollapsed?: boolean;
-  navCollapsedSize: number;
-}
-
-export function DashboardLayout({
-  defaultLayout = [265, 655],
-  defaultCollapsed = false,
-  navCollapsedSize,
-  children,
-}: React.PropsWithChildren<DashboardLayoutProps>) {
-  const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
-
+export function DashboardLayout({ children }: React.PropsWithChildren) {
   const supabase = createClientComponentClient();
   const pathname = usePathname();
   const router = useRouter();
 
   return (
-    <ResizablePanelGroup
-      direction='horizontal'
-      onLayout={(sizes: number[]) => {
-        document.cookie = `react-resizable-panels:layout=${JSON.stringify(
-          sizes
-        )}`;
-      }}
-      className='h-full min-h-screen items-stretch'
-    >
-      <ResizablePanel
-        defaultSize={defaultLayout[0]}
-        collapsedSize={navCollapsedSize}
-        collapsible={false}
-        minSize={15}
-        maxSize={20}
-        onExpand={() => {
-          setIsCollapsed(false);
-          document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-            false
-          )}`;
-        }}
-        onCollapse={() => {
-          setIsCollapsed(true);
-          document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-            true
-          )}`;
-        }}
-        className={cn(
-          isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out'
-        )}
+    <div className='h-full min-h-screen flex'>
+      <div
+        className='w-[300px]'
         style={{
           backgroundImage: "url('/images/dashboard-bg.jpeg')",
           backgroundPosition: 'cover',
@@ -77,9 +35,8 @@ export function DashboardLayout({
             {
               title: 'Create',
               icon: File,
-              variant:
-                pathname === '/dashboard/profiles/create' ? 'default' : 'ghost',
-              href: '/dashboard/profiles/create',
+              variant: 'ghost',
+              href: '/dashboard?create=true',
             },
             {
               title: 'Help',
@@ -98,10 +55,8 @@ export function DashboardLayout({
             },
           ]}
         />
-      </ResizablePanel>
-      <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-        {children}
-      </ResizablePanel>
-    </ResizablePanelGroup>
+      </div>
+      <ScrollArea className='h-screen w-full'>{children}</ScrollArea>
+    </div>
   );
 }

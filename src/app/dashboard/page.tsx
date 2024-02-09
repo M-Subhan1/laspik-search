@@ -13,6 +13,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 import { Loader } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { useDebounce } from 'use-debounce';
 
@@ -41,7 +42,13 @@ import { Profile } from '@/types';
 
 type Mode = 'view' | 'create' | 'edit' | 'delete' | 'bulk_delete';
 
-export default function DashboardHome() {
+type Props = {
+  searchParams: {
+    create?: string;
+  };
+};
+
+export default function DashboardHome({ searchParams }: Props) {
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -56,6 +63,8 @@ export default function DashboardHome() {
   const [mode, setMode] = React.useState<Mode>('view');
   const [query, setQuery] = React.useState('');
   const [debouncedQuery] = useDebounce(query, 250);
+
+  const router = useRouter();
 
   const upsertProfile = useUpsertProfile();
   const deleteProfiles = useDeleteProfiles();
@@ -169,6 +178,13 @@ export default function DashboardHome() {
       </AlertDialogContent>
     </AlertDialog>
   );
+
+  React.useEffect(() => {
+    if (searchParams.create === 'true') {
+      setMode('create');
+      router.replace('/dashboard');
+    }
+  }, [searchParams, router]);
 
   return (
     <Page

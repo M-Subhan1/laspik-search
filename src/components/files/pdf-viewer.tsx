@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronLeftIcon, ChevronRightIcon, Loader } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 
@@ -21,6 +22,8 @@ export default function PdfViwer({ fileUrl }: Props) {
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [containerRef, setContainerRef] = useState<HTMLElement | null>(null);
   const [containerWidth, setContainerWidth] = useState<number>();
+
+  const router = useRouter();
 
   const onResize = useCallback<ResizeObserverCallback>((entries) => {
     const [entry] = entries;
@@ -47,13 +50,23 @@ export default function PdfViwer({ fileUrl }: Props) {
   return (
     <main className='relative flex flex-wrap w-full h-full p-5 items-start'>
       <div className='w-full h-12 left-1/2 flex gap-2 items-center justify-center'>
+        <Button
+          className='justify-self-start mr-auto'
+          onClick={() => router.back()}
+        >
+          Back
+        </Button>
         <Button onClick={handlePrevious} disabled={pageNumber === 1}>
           <ChevronLeftIcon className='h-5 w-5' /> Prev
         </Button>
         <div>
           Page {pageNumber} of {totalPages}
         </div>
-        <Button onClick={handleNext} disabled={pageNumber === totalPages}>
+        <Button
+          className='mr-auto'
+          onClick={handleNext}
+          disabled={pageNumber === totalPages}
+        >
           Next
           <ChevronRightIcon className='h-5 w-5' />
         </Button>
