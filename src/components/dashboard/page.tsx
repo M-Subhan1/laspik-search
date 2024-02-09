@@ -19,10 +19,10 @@ export default function Page({
 }: PageProps) {
   return (
     <div className='relative h-full w-full'>
-      <div className='absolute inset-0 flex flex-col'>
+      <div className='absolute inset-12 flex flex-col'>
         {(title || toolbar) && (
           <div className='flex w-full items-center justify-between border-b border-zinc-200 px-5 py-2 dark:border-zinc-800'>
-            <div className='text-lg font-semibold'>{title}</div>
+            <div className='text-2xl font-semibold'>{title}</div>
             {toolbar}
           </div>
         )}

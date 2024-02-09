@@ -222,10 +222,11 @@ export default function ViewFiles({ params }: PageProps) {
               buttonVariants({
                 size: 'icon',
                 variant: 'ghost',
-              })
+              }),
+              'h-10 w-10'
             )}
           >
-            <ArrowLeftCircleIcon className='w-4 h-4' />
+            <ArrowLeftCircleIcon className='w-6 h-6' />
           </Link>
           Files - {fetchProfile.data?.name ?? 'Loading...'}
         </div>

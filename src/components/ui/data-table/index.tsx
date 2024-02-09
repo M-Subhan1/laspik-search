@@ -22,7 +22,7 @@ export function DataTable<T>({ table }: DataTableProps<T>) {
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow
             key={headerGroup.id}
-            className='border-zinc-200 first-of-type:pl-5 last-of-type:pr-5 dark:border-zinc-800'
+            className='border-zinc-200 text-base first-of-type:pl-5 last-of-type:pr-5 dark:border-zinc-800'
           >
             {headerGroup.headers.map((header) => {
               return (
@@ -55,7 +55,7 @@ export function DataTable<T>({ table }: DataTableProps<T>) {
             <TableRow
               key={row.id}
               data-state={row.getIsSelected() && 'selected'}
-              className='border-zinc-200 dark:border-zinc-800'
+              className='border-zinc-200 text-base dark:border-zinc-800'
             >
               {row.getVisibleCells().map((cell) => (
                 <TableCell

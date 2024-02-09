@@ -45,10 +45,10 @@ export function DataTableToolbar<TData>({
           <Input
             placeholder='Search'
             value={query}
-            className='h-8 w-[150px] lg:w-[250px]'
+            className='h-10 text-lg w-[150px] lg:w-[250px]'
             onChange={(event) => setQuery(event.target.value)}
           />
-          <Button className='h-8 px-2 lg:px-3' onClick={onCreate}>
+          <Button className='h-10 text-lg px-2 lg:px-3' onClick={onCreate}>
             Create
           </Button>
         </div>

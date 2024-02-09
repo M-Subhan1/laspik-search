@@ -30,13 +30,14 @@ export function DataTableToolbar<TData>({
           <>
             <Button
               variant='ghost'
+              size='lg'
               onClick={() => table.resetRowSelection()}
               className='h-8 px-2 lg:px-3'
             >
               Clear Selection
               <Cross2Icon className='ml-2 h-4 w-4' />
             </Button>
-            <Button className='h-8 px-2 lg:px-3' onClick={onDelete}>
+            <Button size='lg' className='h-8 px-2 lg:px-3' onClick={onDelete}>
               Delete
             </Button>
           </>
@@ -45,10 +46,10 @@ export function DataTableToolbar<TData>({
           <Input
             placeholder='Search'
             value={query}
-            className='h-8 w-[150px] lg:w-[250px]'
+            className='h-10 text-lg w-[150px] lg:w-[250px]'
             onChange={(event) => setQuery(event.target.value)}
           />
-          <Button className='h-8 px-2 lg:px-3' onClick={onCreate}>
+          <Button className='h-10 text-lg' onClick={onCreate}>
             Create
           </Button>
         </div>
