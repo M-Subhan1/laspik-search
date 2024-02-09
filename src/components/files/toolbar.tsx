@@ -49,7 +49,7 @@ export function DataTableToolbar<TData>({
             onChange={(event) => setQuery(event.target.value)}
           />
           <Button className='h-10 text-lg px-2 lg:px-3' onClick={onCreate}>
-            Create
+            Upload
           </Button>
         </div>
       </div>
