@@ -22,6 +22,7 @@ import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
 import { useDeleteFiles } from '@/hooks/useDeleteFiles';
+import { useDownloadAll } from '@/hooks/useDownloadAll';
 import { useFetchFiles } from '@/hooks/useFetchFiles';
 import { useFetchProfile } from '@/hooks/useFetchProfile';
 import { useUploadFiles } from '@/hooks/useUploadFiles';
@@ -99,6 +100,8 @@ export default function ViewFiles({ params }: PageProps) {
     profileId,
   });
 
+  const downloadAll = useDownloadAll();
+
   const clearSelection = () => {
     setMode('view');
     setSelected(undefined);
@@ -157,6 +160,10 @@ export default function ViewFiles({ params }: PageProps) {
       setQuery={setQuery}
       onCreate={() => setMode('create')}
       onDelete={() => setMode('bulk_delete')}
+      onDownloadAll={() =>
+        downloadAll.mutate({ profileId, fileName: fetchProfile.data?.name })
+      }
+      isDownloading={downloadAll.isPending}
     />
   );
 
