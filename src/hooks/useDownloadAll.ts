@@ -28,7 +28,9 @@ export const useDownloadAll = () => {
 
       const files = data as File[];
       const tasks = files.map((file) => {
-        return supabase.storage.from('files').download(file.full_path);
+        // ignore first element, take the rest
+        const fileName = file.full_path.split('/').splice(1).join('/');
+        return supabase.storage.from('files').download(fileName);
       });
 
       const toastId = toast.loading(`Downloading ${tasks.length} files.`);
